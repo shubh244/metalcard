@@ -1,4 +1,5 @@
 import { Hero } from "@/components/Hero";
+import { HowItWorks } from "@/components/HowItWorks";
 import { FeaturedSection } from "@/components/FeaturedSection";
 import { CursorLight } from "@/components/CursorLight";
 import { cards } from "@/data/cards";
@@ -11,6 +12,7 @@ export default function HomePage() {
   return (
     <CursorLight>
       <Hero />
+      <HowItWorks />
       <FeaturedSection featured={featured} />
     </CursorLight>
   );

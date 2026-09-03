@@ -9,19 +9,15 @@ import {
 } from "framer-motion";
 import { useRef, type MouseEvent } from "react";
 import { MagneticButton } from "./MagneticButton";
-import { HeroMetalCanvas } from "./HeroMetalCanvas";
+import { MetalCard } from "./MetalCard";
+import { FintechIconField } from "./FintechIconField";
 import { RevealText } from "./RevealText";
-import type { Pointer } from "./HeroMetalCanvas";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { useHasMounted } from "@/hooks/useHasMounted";
 
-const cardShellClass =
-  "absolute bottom-[10%] right-[3%] h-[300px] w-[min(400px,84%)] sm:bottom-[14%] sm:right-[6%] sm:h-[340px] sm:w-[440px] lg:right-[8%] lg:h-[360px] lg:w-[460px]";
-
 export function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
-  const pointer = useRef<Pointer>({ x: 0, y: 0 });
   const mounted = useHasMounted();
   const reduced = usePrefersReducedMotion();
   const mobile = useIsMobile();
@@ -33,28 +29,22 @@ export function Hero() {
   const sx = useSpring(mx, { stiffness: 48, damping: 18, mass: 0.55 });
   const sy = useSpring(my, { stiffness: 48, damping: 18, mass: 0.55 });
 
-  const glowX = useTransform(sx, [-0.5, 0.5], [38, 62]);
-  const glowY = useTransform(sy, [-0.5, 0.5], [28, 52]);
-  const ambient = useMotionTemplate`radial-gradient(ellipse 58% 48% at ${glowX}% ${glowY}%, rgba(200,205,212,0.16), transparent 62%)`;
+  const glowX = useTransform(sx, [-0.5, 0.5], [40, 62]);
+  const glowY = useTransform(sy, [-0.5, 0.5], [30, 52]);
+  const ambient = useMotionTemplate`radial-gradient(ellipse 55% 48% at ${glowX}% ${glowY}%, rgba(200,205,212,0.14), transparent 62%)`;
 
-  const layerFarX = useTransform(sx, [-0.5, 0.5], [-8, 8]);
-  const layerFarY = useTransform(sy, [-0.5, 0.5], [-6, 6]);
-  const layerNearX = useTransform(sx, [-0.5, 0.5], [12, -12]);
-  const layerNearY = useTransform(sy, [-0.5, 0.5], [8, -8]);
+  const cardX = useTransform(sx, [-0.5, 0.5], [10, -10]);
+  const cardY = useTransform(sy, [-0.5, 0.5], [6, -6]);
+  const cardRot = useTransform(sx, [-0.5, 0.5], [2, -4]);
 
   function onMove(e: MouseEvent) {
-    if (!sectionRef.current) return;
+    if (!canParallax || !sectionRef.current) return;
     const rect = sectionRef.current.getBoundingClientRect();
-    const nx = (e.clientX - rect.left) / rect.width - 0.5;
-    const ny = (e.clientY - rect.top) / rect.height - 0.5;
-    pointer.current = { x: nx, y: ny };
-    if (!canParallax) return;
-    mx.set(nx);
-    my.set(ny);
+    mx.set((e.clientX - rect.left) / rect.width - 0.5);
+    my.set((e.clientY - rect.top) / rect.height - 0.5);
   }
 
   function onLeave() {
-    pointer.current = { x: 0, y: 0 };
     mx.set(0);
     my.set(0);
   }
@@ -71,7 +61,7 @@ export function Hero() {
           className="absolute inset-0"
           style={{
             background:
-              "linear-gradient(160deg, #1a1e24 0%, #0b0d10 40%, #12151a 70%, #0b0d10 100%)",
+              "linear-gradient(155deg, #15181e 0%, #0b0d10 42%, #10141a 72%, #0b0d10 100%)",
           }}
         />
 
@@ -80,82 +70,62 @@ export function Hero() {
           className="pointer-events-none absolute inset-0"
           style={{
             background:
-              "radial-gradient(ellipse 75% 70% at 50% 45%, transparent 40%, rgba(11,13,16,0.55) 100%)",
+              "radial-gradient(ellipse 70% 65% at 58% 42%, transparent 35%, rgba(11,13,16,0.55) 100%)",
           }}
         />
 
         <div
-          className="absolute -right-[10%] top-[10%] h-[70%] w-[70%] opacity-90"
+          className="absolute right-[5%] top-[15%] h-[55%] w-[50%] opacity-80"
           style={{
             background:
-              "radial-gradient(ellipse at center, rgba(200,205,212,0.15), transparent 60%)",
+              "radial-gradient(ellipse at center, rgba(200,205,212,0.12), transparent 65%)",
           }}
         />
         {canParallax && (
           <motion.div
-            className="absolute inset-0 opacity-90"
+            className="absolute inset-0 opacity-80"
             style={{ background: ambient }}
           />
         )}
 
         <motion.div
           aria-hidden
-          className="pointer-events-none absolute left-[6%] top-[26%] h-44 w-44 rounded-full opacity-35 blur-3xl sm:h-60 sm:w-60"
+          className="pointer-events-none absolute right-[18%] top-[30%] h-56 w-56 rounded-full opacity-30 blur-3xl"
           style={{
             background:
-              "radial-gradient(circle, rgba(184,160,106,0.32), transparent 70%)",
-            x: canParallax ? layerFarX : 0,
-            y: canParallax ? layerFarY : 0,
+              "radial-gradient(circle, rgba(184,160,106,0.2), transparent 70%)",
           }}
-          animate={canAnimate ? { opacity: [0.22, 0.4, 0.22] } : undefined}
-          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+          animate={canAnimate ? { opacity: [0.18, 0.3, 0.18] } : undefined}
+          transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }}
         />
 
-        <motion.div
-          aria-hidden
-          className="pointer-events-none absolute bottom-[20%] left-[32%] h-36 w-36 rounded-full opacity-25 blur-2xl sm:h-48 sm:w-48"
-          style={{
-            background:
-              "radial-gradient(circle, rgba(232,236,241,0.22), transparent 70%)",
-            x: canParallax ? layerNearX : 0,
-            y: canParallax ? layerNearY : 0,
-          }}
-        />
+        <FintechIconField />
 
+        {/* Simple professional card — no WebGL */}
         <motion.div
-          aria-hidden
-          className="pointer-events-none absolute left-[10%] top-[60%] hidden h-[4.5rem] w-28 rounded-2xl border border-white/[0.09] bg-white/[0.03] shadow-metal-sm backdrop-blur-md md:block"
+          className="absolute bottom-[12%] right-[4%] z-[3] w-[min(360px,82%)] sm:bottom-[16%] sm:right-[8%] sm:w-[400px] lg:right-[10%] lg:w-[420px]"
           style={{
-            rotate: -14,
-            x: canParallax ? layerFarX : 0,
-            y: canParallax ? layerFarY : 0,
+            x: canParallax ? cardX : 0,
+            y: canParallax ? cardY : 0,
+            rotate: canParallax ? cardRot : -6,
           }}
-          animate={canAnimate ? { y: [0, -9, 0] } : undefined}
-          transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
-        />
-        <motion.div
-          aria-hidden
-          className="pointer-events-none absolute right-[40%] top-[20%] hidden h-14 w-24 rounded-xl border border-white/[0.07] bg-steel/30 backdrop-blur-lg lg:block"
-          style={{
-            rotate: 10,
-            x: canParallax ? layerNearX : 0,
-            y: canParallax ? layerNearY : 0,
-          }}
-          animate={canAnimate ? { y: [0, 7, 0] } : undefined}
-          transition={{
-            duration: 5.5,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 0.6,
-          }}
-        />
-
-        <motion.div
           initial={false}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          className={cardShellClass}
         >
-          <HeroMetalCanvas pointer={pointer} className="h-full w-full" />
+          <div style={{ transform: "rotate(-6deg)" }}>
+            <MetalCard
+              card={{
+                name: "Cardholder Name",
+                bankName: "CardForge",
+                network: "Visa",
+                metalTone: "obsidian",
+                variant: "Metal",
+              }}
+              size="hero"
+              interactive={!mobile && !reduced}
+              float={!reduced}
+              className="!max-w-none shadow-metal"
+            />
+          </div>
         </motion.div>
       </div>
 
@@ -201,7 +171,7 @@ export function Hero() {
 
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-graphite via-graphite/80 to-transparent"
+        className="pointer-events-none absolute inset-x-0 bottom-0 z-[4] h-28 bg-gradient-to-t from-graphite via-graphite/80 to-transparent"
       />
     </section>
   );

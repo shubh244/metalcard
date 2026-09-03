@@ -18,7 +18,6 @@ import {
 import * as THREE from "three";
 import { MetalCard } from "./MetalCard";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
-import { useIsMobile } from "@/hooks/useIsMobile";
 
 export type Pointer = { x: number; y: number };
 
@@ -39,146 +38,132 @@ function roundRect(
   ctx.closePath();
 }
 
-function emboss(
+function softText(
   ctx: CanvasRenderingContext2D,
   text: string,
   x: number,
   y: number,
-  fill = "#e2e6ec",
+  fill: string,
   align: CanvasTextAlign = "left"
 ) {
   ctx.textAlign = align;
   ctx.textBaseline = "alphabetic";
-  ctx.fillStyle = "rgba(0,0,0,0.75)";
-  ctx.fillText(text, x + 2, y + 3);
-  ctx.fillStyle = "rgba(255,255,255,0.4)";
-  ctx.fillText(text, x - 1.2, y - 1.4);
+  ctx.fillStyle = "rgba(0,0,0,0.45)";
+  ctx.fillText(text, x + 1, y + 1.5);
   ctx.fillStyle = fill;
   ctx.fillText(text, x, y);
   ctx.textAlign = "left";
 }
 
+/** Clean fintech card face — masked PAN, placeholders only */
 function createFaceTexture() {
   const W = 2048;
-  const H = 1292;
+  const H = 1292; // ISO ID-1 ratio
   const canvas = document.createElement("canvas");
   canvas.width = W;
   canvas.height = H;
   const ctx = canvas.getContext("2d")!;
 
-  // Readable graphite metal (not near-black)
-  const g = ctx.createLinearGradient(0, 0, W, H);
-  g.addColorStop(0, "#4a5160");
-  g.addColorStop(0.35, "#2a303a");
-  g.addColorStop(0.7, "#1a1e26");
-  g.addColorStop(1, "#12151c");
-  ctx.fillStyle = g;
+  // Soft graphite metal
+  const base = ctx.createLinearGradient(0, 0, W, H);
+  base.addColorStop(0, "#3e4552");
+  base.addColorStop(0.4, "#252a33");
+  base.addColorStop(0.75, "#171b22");
+  base.addColorStop(1, "#12151b");
+  ctx.fillStyle = base;
   ctx.fillRect(0, 0, W, H);
 
+  // Subtle brush
   for (let i = 0; i < H; i += 2) {
     ctx.fillStyle =
-      i % 4 === 0 ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.04)";
+      i % 4 === 0 ? "rgba(255,255,255,0.035)" : "rgba(0,0,0,0.025)";
     ctx.fillRect(0, i, W, 1);
   }
 
+  // Soft diagonal reflection
   const sheen = ctx.createLinearGradient(0, 0, W, H);
-  sheen.addColorStop(0.25, "rgba(255,255,255,0)");
-  sheen.addColorStop(0.45, "rgba(255,255,255,0.16)");
-  sheen.addColorStop(0.6, "rgba(255,255,255,0.03)");
-  sheen.addColorStop(0.85, "rgba(255,255,255,0)");
+  sheen.addColorStop(0.3, "rgba(255,255,255,0)");
+  sheen.addColorStop(0.45, "rgba(255,255,255,0.12)");
+  sheen.addColorStop(0.55, "rgba(255,255,255,0.03)");
+  sheen.addColorStop(0.75, "rgba(255,255,255,0)");
   ctx.fillStyle = sheen;
   ctx.fillRect(0, 0, W, H);
 
-  ctx.strokeStyle = "rgba(255,255,255,0.14)";
-  ctx.lineWidth = 4;
-  roundRect(ctx, 20, 20, W - 40, H - 40, 48);
+  // Quiet edge
+  ctx.strokeStyle = "rgba(255,255,255,0.1)";
+  ctx.lineWidth = 3;
+  roundRect(ctx, 24, 24, W - 48, H - 48, 48);
   ctx.stroke();
 
-  const m = 120;
-  const muted = "#b8c0ca";
-  const bright = "#eef1f5";
+  const m = 140;
+  const muted = "rgba(200,205,212,0.72)";
+  const bright = "rgba(232,236,241,0.92)";
 
-  // Bank
-  ctx.font = "700 36px Arial, Helvetica, sans-serif";
-  let bx = m;
-  for (const ch of "HDFC BANK") {
-    emboss(ctx, ch, bx, 130, muted);
-    bx += ctx.measureText(ch).width + 7;
-  }
+  // Issuer placeholder
+  ctx.font = "600 34px Arial, Helvetica, sans-serif";
+  softText(ctx, "CARDFORGE", m, 150, muted);
 
-  // Chip
+  // EMV chip
   const cx = m;
-  const cy = 250;
-  const cw = 112;
-  const ch = 88;
-  const chipG = ctx.createLinearGradient(cx, cy, cx + cw, cy + ch);
-  chipG.addColorStop(0, "#f8ecc0");
-  chipG.addColorStop(0.45, "#d4af37");
-  chipG.addColorStop(1, "#7a5a1c");
-  ctx.fillStyle = chipG;
+  const cy = 280;
+  const cw = 108;
+  const ch = 84;
+  const chip = ctx.createLinearGradient(cx, cy, cx + cw, cy + ch);
+  chip.addColorStop(0, "#f0dfb0");
+  chip.addColorStop(0.45, "#c9a24a");
+  chip.addColorStop(1, "#7a5c22");
+  ctx.fillStyle = chip;
   roundRect(ctx, cx, cy, cw, ch, 12);
   ctx.fill();
-  ctx.strokeStyle = "rgba(0,0,0,0.45)";
+  ctx.strokeStyle = "rgba(0,0,0,0.3)";
   ctx.lineWidth = 2;
   roundRect(ctx, cx, cy, cw, ch, 12);
   ctx.stroke();
-  ctx.strokeStyle = "rgba(60,40,10,0.55)";
-  ctx.lineWidth = 2;
+  ctx.strokeStyle = "rgba(70,50,15,0.45)";
+  ctx.lineWidth = 1.8;
   for (let row = 0; row < 2; row++) {
     for (let col = 0; col < 3; col++) {
-      roundRect(ctx, cx + 14 + col * 28, cy + 14 + row * 30, 24, 26, 3);
+      roundRect(ctx, cx + 14 + col * 28, cy + 14 + row * 28, 24, 24, 3);
       ctx.stroke();
     }
   }
 
   // Contactless
   ctx.strokeStyle = muted;
-  ctx.lineWidth = 4;
+  ctx.lineWidth = 3.5;
   ctx.lineCap = "round";
-  for (let i = 0; i < 4; i++) {
+  for (let i = 0; i < 3; i++) {
     ctx.beginPath();
-    ctx.arc(m + 170, 300, 14 + i * 14, -Math.PI * 0.55, -Math.PI * 0.12);
+    ctx.arc(m + 168, 328, 12 + i * 13, -Math.PI * 0.55, -Math.PI * 0.15);
     ctx.stroke();
   }
 
-  // PAN
-  ctx.font = "700 76px 'Courier New', monospace";
-  const pan = "5412883401927741";
-  let px = m;
-  for (let i = 0; i < 16; i++) {
-    emboss(ctx, pan[i], px, 560, bright);
-    px += 54;
-    if ((i + 1) % 4 === 0) px += 34;
-  }
+  // Masked number
+  ctx.font = "600 72px 'Courier New', monospace";
+  softText(ctx, "••••  ••••  ••••  4821", m, 600, bright);
 
-  // Valid thru
-  ctx.font = "600 22px Arial, Helvetica, sans-serif";
-  emboss(ctx, "VALID", m, 655, "rgba(180,186,194,0.65)");
-  emboss(ctx, "THRU", m, 682, "rgba(180,186,194,0.65)");
-  ctx.font = "700 44px 'Courier New', monospace";
-  emboss(ctx, "12/29", m + 110, 678, bright);
+  // Expiry placeholder
+  ctx.font = "500 22px Arial, Helvetica, sans-serif";
+  softText(ctx, "VALID THRU", m, 700, "rgba(180,186,194,0.55)");
+  ctx.font = "600 40px 'Courier New', monospace";
+  softText(ctx, "••/••", m, 755, bright);
 
-  // Name
+  // Cardholder placeholder
+  ctx.font = "600 40px Arial, Helvetica, sans-serif";
+  softText(ctx, "CARDHOLDER NAME", m, H - 160, bright);
+
+  // Generic network mark (not a real logo)
   ctx.font = "700 48px Arial, Helvetica, sans-serif";
-  let nx = m;
-  for (const ch of "INFINIA METAL") {
-    emboss(ctx, ch, nx, H - 170, bright);
-    nx += ctx.measureText(ch).width + 3;
-  }
-
-  // Visa
-  ctx.font = "italic 800 58px Arial, Helvetica, sans-serif";
-  emboss(ctx, "VISA", W - m, H - 145, bright, "right");
-  const bar = ctx.createLinearGradient(W - m - 120, H - 120, W - m, H - 120);
-  bar.addColorStop(0, "#1a1f71");
-  bar.addColorStop(0.5, "#f7b600");
-  bar.addColorStop(1, "#1a1f71");
-  ctx.fillStyle = bar;
-  ctx.fillRect(W - m - 118, H - 125, 118, 5);
+  softText(ctx, "PAY", W - m, H - 170, bright, "right");
+  const mark = ctx.createLinearGradient(W - m - 90, H - 145, W - m, H - 145);
+  mark.addColorStop(0, "rgba(184,160,106,0.85)");
+  mark.addColorStop(1, "rgba(200,205,212,0.5)");
+  ctx.fillStyle = mark;
+  ctx.fillRect(W - m - 88, H - 148, 88, 5);
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
-  texture.anisotropy = 8;
+  texture.anisotropy = 12;
   texture.needsUpdate = true;
   return texture;
 }
@@ -196,8 +181,8 @@ function CardMesh({
 
   useFrame(() => {
     if (!group.current) return;
-    const tx = reduced ? -0.22 : pointer.current.y * 0.55 - 0.22;
-    const ty = reduced ? -0.4 : pointer.current.x * 0.7 - 0.4;
+    const tx = reduced ? -0.2 : pointer.current.y * 0.4 - 0.2;
+    const ty = reduced ? -0.35 : pointer.current.x * 0.55 - 0.35;
     group.current.rotation.x = THREE.MathUtils.lerp(
       group.current.rotation.x,
       tx,
@@ -211,33 +196,35 @@ function CardMesh({
   });
 
   return (
-    <group ref={group} rotation={[-0.22, -0.4, -0.1]} scale={1.05}>
-      {/* Thickness / edge */}
-      <RoundedBox args={[3.4, 2.14, 0.07]} radius={0.1} smoothness={6}>
-        <meshStandardMaterial color="#0d0f14" metalness={0.8} roughness={0.35} />
-      </RoundedBox>
-
-      {/* Front face — BasicMaterial so texture never washes to black/white */}
-      <mesh position={[0, 0, 0.038]}>
-        <planeGeometry args={[3.28, 2.04]} />
-        <meshBasicMaterial map={map} toneMapped={false} />
-      </mesh>
-
-      {/* Soft clearcoat plate for specular glints without killing albedo */}
-      <mesh position={[0, 0, 0.04]}>
-        <planeGeometry args={[3.28, 2.04]} />
+    <group ref={group} rotation={[-0.2, -0.35, -0.08]} scale={1.05}>
+      <RoundedBox
+        args={[3.375, 2.125, 0.1]}
+        radius={0.1}
+        smoothness={8}
+      >
         <meshPhysicalMaterial
-          color="#ffffff"
-          transparent
-          opacity={0.08}
-          metalness={0.9}
-          roughness={0.15}
-          clearcoat={1}
-          clearcoatRoughness={0.1}
-          envMapIntensity={0.6}
-          depthWrite={false}
+          map={map}
+          metalness={0.55}
+          roughness={0.38}
+          clearcoat={0.7}
+          clearcoatRoughness={0.2}
+          envMapIntensity={0.75}
+          reflectivity={0.7}
         />
-      </mesh>
+      </RoundedBox>
+      {/* Thin metal rim */}
+      <RoundedBox
+        args={[3.39, 2.14, 0.05]}
+        radius={0.1}
+        smoothness={6}
+        position={[0, 0, -0.03]}
+      >
+        <meshStandardMaterial
+          color="#6a7280"
+          metalness={0.9}
+          roughness={0.3}
+        />
+      </RoundedBox>
     </group>
   );
 }
@@ -253,28 +240,28 @@ function Scene({
 }) {
   return (
     <>
-      <ambientLight intensity={0.9} />
-      <directionalLight position={[4, 5, 3]} intensity={1.1} color="#ffffff" />
+      <ambientLight intensity={0.55} />
+      <directionalLight position={[4, 5, 3]} intensity={1.15} color="#f4f6f8" />
       <directionalLight
-        position={[-3, 2, -2]}
-        intensity={0.35}
+        position={[-3, 1.5, -2]}
+        intensity={0.3}
         color="#b8a06a"
       />
       <Float
-        speed={reduced ? 0 : 1.4}
-        rotationIntensity={reduced ? 0 : 0.2}
-        floatIntensity={reduced ? 0 : 0.4}
+        speed={reduced ? 0 : 1.2}
+        rotationIntensity={0}
+        floatIntensity={reduced ? 0 : 0.28}
       >
         <CardMesh pointer={pointer} reduced={reduced} map={map} />
       </Float>
       <ContactShadows
-        position={[0, -1.2, 0]}
-        opacity={0.5}
+        position={[0, -1.25, 0]}
+        opacity={0.45}
         scale={7}
-        blur={2.5}
+        blur={2.6}
         far={3}
       />
-      <Environment preset="apartment" environmentIntensity={0.25} />
+      <Environment preset="apartment" environmentIntensity={0.55} />
     </>
   );
 }
@@ -286,8 +273,10 @@ type Props = {
 
 export function HeroMetalCanvas({ className = "", pointer }: Props) {
   const reduced = usePrefersReducedMotion();
-  const mobile = useIsMobile();
-  const [ready, setReady] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [sceneReady, setSceneReady] = useState(false);
+
   const map = useMemo(() => {
     if (typeof document === "undefined") return null;
     try {
@@ -298,42 +287,59 @@ export function HeroMetalCanvas({ className = "", pointer }: Props) {
   }, []);
 
   useLayoutEffect(() => {
-    setReady(true);
+    setIsMobile(window.matchMedia("(max-width: 768px)").matches);
+    setMounted(true);
     return () => {
       map?.dispose();
     };
   }, [map]);
 
-  // Mobile / no-WebGL fallback
-  if (!ready || mobile || !map) {
+  // SSR / first paint — empty shell (no flat card flash)
+  if (!mounted) {
+    return <div className={`h-full w-full ${className}`} aria-hidden />;
+  }
+
+  // Mobile only — CSS card (no WebGL swap)
+  if (isMobile || !map) {
     return (
-      <div className={`flex h-full w-full items-center justify-center ${className}`}>
+      <div
+        className={`flex h-full w-full items-center justify-center ${className}`}
+      >
         <MetalCard
           card={{
-            name: "Infinia Metal",
-            bankName: "HDFC Bank",
+            name: "Cardholder Name",
+            bankName: "CardForge",
             network: "Visa",
             metalTone: "obsidian",
             variant: "Metal",
           }}
           size="hero"
-          interactive={!mobile && !reduced}
+          interactive={!reduced}
           float={!reduced}
-          className="!max-w-[360px] sm:!max-w-[400px]"
+          className="!max-w-[380px] sm:!max-w-[420px]"
         />
       </div>
     );
   }
 
   return (
-    <div className={`relative h-full w-full ${className}`}>
+    <div
+      className={`relative h-full w-full transition-opacity duration-500 ease-out ${className}`}
+      style={{ opacity: sceneReady ? 1 : 0 }}
+    >
       <Canvas
         dpr={[1, 1.75]}
-        camera={{ position: [0, 0.15, 4.4], fov: 32 }}
-        gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
+        camera={{ position: [0.15, 0.2, 4.3], fov: 30 }}
+        gl={{
+          antialias: true,
+          alpha: true,
+          powerPreference: "high-performance",
+        }}
         onCreated={({ gl }) => {
           gl.setClearColor(0x000000, 0);
-          gl.toneMapping = THREE.NoToneMapping;
+          gl.toneMapping = THREE.ACESFilmicToneMapping;
+          gl.toneMappingExposure = 1.05;
+          requestAnimationFrame(() => setSceneReady(true));
         }}
       >
         <Suspense fallback={null}>
@@ -343,3 +349,5 @@ export function HeroMetalCanvas({ className = "", pointer }: Props) {
     </div>
   );
 }
+
+

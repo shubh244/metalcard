@@ -137,10 +137,24 @@ export function MetalCard({
                 transformStyle: "preserve-3d",
                 boxShadow: shadow,
               }
-            : { transformStyle: "preserve-3d" }
+            : {
+                transformStyle: "preserve-3d",
+                boxShadow:
+                  "0 28px 50px -12px rgba(0,0,0,0.65), 0 0 0 1px rgba(255,255,255,0.08), inset 0 1px 0 rgba(255,255,255,0.16)",
+              }
         }
-        className="absolute inset-0 overflow-hidden rounded-xl shadow-metal will-change-transform"
+        className="absolute inset-0 overflow-hidden rounded-xl will-change-transform"
       >
+        {/* CSS thickness rim */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -inset-[2px] -z-10 rounded-[14px]"
+          style={{
+            background: `linear-gradient(145deg, ${tone.from}, ${tone.to})`,
+            transform: "translateZ(-8px) scale(1.01)",
+            boxShadow: "0 20px 40px rgba(0,0,0,0.45)",
+          }}
+        />
         <div
           className="absolute inset-0"
           style={{
@@ -192,11 +206,10 @@ export function MetalCard({
         >
           {/* Issuer */}
           <p
-            className="text-[8px] font-bold uppercase tracking-[0.28em] sm:text-[9px]"
+            className="text-[8px] font-semibold uppercase tracking-[0.28em] sm:text-[9px]"
             style={{
               color: tone.accent,
-              textShadow:
-                "0 1px 0 rgba(0,0,0,0.65), 0 -0.5px 0 rgba(255,255,255,0.28)",
+              textShadow: "0 1px 0 rgba(0,0,0,0.5)",
             }}
           >
             {card?.bankName ?? "CardForge"}
@@ -205,82 +218,70 @@ export function MetalCard({
           {/* Chip row */}
           <div className="mt-3 flex items-center gap-2.5 sm:mt-4">
             <div
-              className="relative h-7 w-9 shrink-0 overflow-hidden rounded-[4px] bg-gradient-to-br from-[#f8ecc0] via-[#d4af37] to-[#7a5a1c] shadow-sm ring-1 ring-black/40 sm:h-8 sm:w-11"
+              className="relative h-7 w-9 shrink-0 overflow-hidden rounded-[4px] bg-gradient-to-br from-[#f0dfb0] via-[#c9a24a] to-[#7a5c22] shadow-sm ring-1 ring-black/30 sm:h-8 sm:w-10"
               style={{ transform: "translateZ(12px)" }}
             >
-              <div className="absolute inset-[3px] grid grid-cols-3 grid-rows-2 gap-px opacity-50">
+              <div className="absolute inset-[3px] grid grid-cols-3 grid-rows-2 gap-px opacity-45">
                 {Array.from({ length: 6 }).map((_, i) => (
-                  <span key={i} className="rounded-[1px] border border-[#4a320c]/60" />
+                  <span
+                    key={i}
+                    className="rounded-[1px] border border-[#4a320c]/55"
+                  />
                 ))}
               </div>
             </div>
-            {/* Contactless arcs */}
             <svg
-              width="18"
-              height="18"
+              width="16"
+              height="16"
               viewBox="0 0 24 24"
               fill="none"
-              className="opacity-60"
+              className="opacity-55"
               aria-hidden
             >
               <path
                 d="M8 15a6 6 0 0 1 0-6M11 17a9 9 0 0 1 0-10M14 19a12 12 0 0 1 0-14"
                 stroke={tone.accent}
-                strokeWidth="1.6"
+                strokeWidth="1.5"
                 strokeLinecap="round"
               />
             </svg>
           </div>
 
-          {/* Embossed PAN */}
+          {/* Masked PAN */}
           <p
-            className="mt-auto font-mono text-[11px] font-semibold tracking-[0.2em] text-ice sm:text-[13px]"
-            style={{
-              textShadow:
-                "0 1.5px 0 rgba(0,0,0,0.7), 0 -0.5px 0 rgba(255,255,255,0.3)",
-            }}
+            className="mt-auto font-mono text-[12px] font-medium tracking-[0.22em] text-ice/90 sm:text-[14px]"
+            style={{ textShadow: "0 1px 0 rgba(0,0,0,0.55)" }}
           >
-            {size === "sm" ? "••••  ••••  ••••  7741" : "5412  8834  0192  7741"}
+            ••••&nbsp;&nbsp;••••&nbsp;&nbsp;••••&nbsp;&nbsp;4821
           </p>
 
-          {/* Footer: name + thru + network */}
-          <div className="mt-2 flex items-end justify-between gap-2 sm:mt-3">
+          {/* Footer placeholders */}
+          <div className="mt-2.5 flex items-end justify-between gap-2 sm:mt-3">
             <div className="min-w-0">
-              <p className="text-[6px] uppercase tracking-wider text-silver/45 sm:text-[7px]">
+              <p className="text-[6px] uppercase tracking-wider text-silver/40 sm:text-[7px]">
                 Valid thru
               </p>
               <p
-                className="font-mono text-[10px] text-ice/90 sm:text-[11px]"
-                style={{
-                  textShadow:
-                    "0 1px 0 rgba(0,0,0,0.55), 0 -0.5px 0 rgba(255,255,255,0.22)",
-                }}
+                className="font-mono text-[10px] text-ice/85 sm:text-[11px]"
+                style={{ textShadow: "0 1px 0 rgba(0,0,0,0.45)" }}
               >
-                12/29
+                ••/••
               </p>
               <p
-                className="mt-1 truncate text-[9px] font-bold uppercase tracking-[0.12em] text-ice/90 sm:text-[10px]"
-                style={{
-                  textShadow:
-                    "0 1px 0 rgba(0,0,0,0.55), 0 -0.5px 0 rgba(255,255,255,0.22)",
-                }}
+                className="mt-1 truncate text-[9px] font-semibold uppercase tracking-[0.14em] text-ice/85 sm:text-[10px]"
+                style={{ textShadow: "0 1px 0 rgba(0,0,0,0.45)" }}
               >
-                {(card?.name ?? "Metal Edition")
-                  .replace(/^HDFC\s+/i, "")
-                  .toUpperCase()}
+                Cardholder Name
               </p>
             </div>
             <div className="shrink-0 text-right">
               <p
-                className="text-[11px] font-black italic tracking-wide text-ice sm:text-xs"
-                style={{
-                  textShadow:
-                    "0 1px 0 rgba(0,0,0,0.6), 0 -0.5px 0 rgba(255,255,255,0.28)",
-                }}
+                className="text-[11px] font-bold tracking-wide text-ice/90 sm:text-xs"
+                style={{ textShadow: "0 1px 0 rgba(0,0,0,0.5)" }}
               >
-                {(card?.network ?? "Visa").toUpperCase()}
+                PAY
               </p>
-              <div className="ml-auto mt-0.5 h-[3px] w-10 rounded-sm bg-gradient-to-r from-[#1a1f71] via-[#f7b600] to-[#1a1f71]" />
+              <div className="ml-auto mt-0.5 h-[3px] w-9 rounded-sm bg-gradient-to-r from-brass/80 to-silver/40" />
             </div>
           </div>
         </motion.div>
