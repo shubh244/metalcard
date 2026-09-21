@@ -5,7 +5,7 @@ import { useMemo, useState } from "react";
 import { rankCardsByValue } from "@/lib/calculate";
 import { formatINR } from "@/lib/format";
 import type { SpendInput } from "@/types/card";
-import { MetalCard } from "./MetalCard";
+import { ProductCard } from "./ProductCard";
 
 const defaults: SpendInput = {
   online: 25000,
@@ -82,7 +82,7 @@ export function CalculatorForm() {
           <div key={r.card.id} className="metal-panel rounded-lg p-5">
             <div className="flex flex-col gap-4 sm:flex-row">
               <div className="w-full max-w-[180px] shrink-0">
-                <MetalCard card={r.card} size="sm" interactive={false} />
+                <ProductCard card={r.card} size="sm" interactive={false} />
               </div>
               <div className="flex-1">
                 <p className="text-xs text-brass">#{i + 1}</p>

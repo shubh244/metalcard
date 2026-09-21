@@ -1,6 +1,7 @@
 import type { CreditCard } from "@/types/card";
+import { BANK_APPLY, moreCards } from "./moreCards";
 
-export const cards: CreditCard[] = [
+const seedCards: CreditCard[] = [
   {
     id: "HDFC001",
     bankId: "HDFC",
@@ -74,7 +75,7 @@ export const cards: CreditCard[] = [
       value: 8,
     },
     metalTone: "obsidian",
-    applyUrl: "https://www.hdfcbank.com/",
+    applyUrl: BANK_APPLY.HDFC,
     seoTitle: "HDFC Infinia Metal Credit Card — Fees, Rewards & Lounge",
     seoDescription:
       "Compare HDFC Infinia Metal joining fee, 5X SmartBuy rewards, unlimited lounge access and eligibility.",
@@ -152,7 +153,7 @@ export const cards: CreditCard[] = [
       value: 8.5,
     },
     metalTone: "gold",
-    applyUrl: "https://www.hdfcbank.com/",
+    applyUrl: BANK_APPLY.HDFC,
     seoTitle: "HDFC Regalia Gold Credit Card Review",
     seoDescription:
       "HDFC Regalia Gold fees, lounge benefits, reward rates and eligibility for premium travellers.",
@@ -223,7 +224,7 @@ export const cards: CreditCard[] = [
       value: 8.5,
     },
     metalTone: "silver",
-    applyUrl: "https://www.hdfcbank.com/",
+    applyUrl: BANK_APPLY.HDFC,
     seoTitle: "HDFC Millennia Credit Card — Cashback & Fees",
     seoDescription:
       "HDFC Millennia cashback rates, annual fee waiver and eligibility for everyday spenders.",
@@ -294,7 +295,7 @@ export const cards: CreditCard[] = [
       value: 9,
     },
     metalTone: "rose",
-    applyUrl: "https://www.hdfcbank.com/",
+    applyUrl: BANK_APPLY.HDFC,
     seoTitle: "Swiggy HDFC Credit Card — Food Cashback",
     seoDescription:
       "Swiggy HDFC card cashback on food delivery, fees and eligibility explained.",
@@ -372,7 +373,7 @@ export const cards: CreditCard[] = [
       value: 8,
     },
     metalTone: "blue",
-    applyUrl: "https://www.hdfcbank.com/",
+    applyUrl: BANK_APPLY.HDFC,
     seoTitle: "Tata Neu Infinity HDFC Credit Card",
     seoDescription:
       "Tata Neu Infinity rewards, RuPay UPI benefits, fees and lounge access.",
@@ -443,7 +444,7 @@ export const cards: CreditCard[] = [
       value: 9.5,
     },
     metalTone: "graphite",
-    applyUrl: "https://www.sbicard.com/",
+    applyUrl: BANK_APPLY.SBI,
     seoTitle: "SBI Cashback Credit Card — 5% Online",
     seoDescription:
       "SBI Cashback card 5% online cashback, annual fee, waiver and eligibility.",
@@ -517,7 +518,7 @@ export const cards: CreditCard[] = [
       value: 7.5,
     },
     metalTone: "gold",
-    applyUrl: "https://www.sbicard.com/",
+    applyUrl: BANK_APPLY.SBI,
     seoTitle: "SBI Card PRIME — Lifestyle Rewards",
     seoDescription:
       "SBI PRIME fees, movie offers, lounge access and milestone benefits.",
@@ -591,7 +592,7 @@ export const cards: CreditCard[] = [
       value: 7.5,
     },
     metalTone: "obsidian",
-    applyUrl: "https://www.sbicard.com/",
+    applyUrl: BANK_APPLY.SBI,
     seoTitle: "SBI Card ELITE Review",
     seoDescription:
       "SBI ELITE credit card fees, lounge, rewards and eligibility.",
@@ -662,7 +663,7 @@ export const cards: CreditCard[] = [
       value: 9.5,
     },
     metalTone: "graphite",
-    applyUrl: "https://www.icicibank.com/",
+    applyUrl: BANK_APPLY.ICICI,
     seoTitle: "Amazon Pay ICICI Credit Card",
     seoDescription:
       "Amazon Pay ICICI cashback for Prime & non-Prime, zero joining fee and eligibility.",
@@ -729,7 +730,7 @@ export const cards: CreditCard[] = [
       value: 7,
     },
     metalTone: "blue",
-    applyUrl: "https://www.icicibank.com/",
+    applyUrl: BANK_APPLY.ICICI,
     seoTitle: "ICICI Sapphiro Credit Card Review",
     seoDescription:
       "ICICI Sapphiro fees, lounge, golf and lifestyle benefits compared.",
@@ -803,7 +804,7 @@ export const cards: CreditCard[] = [
       value: 8,
     },
     metalTone: "obsidian",
-    applyUrl: "https://www.axisbank.com/",
+    applyUrl: BANK_APPLY.AXIS,
     seoTitle: "Axis Magnus Credit Card — EDGE Rewards",
     seoDescription:
       "Axis Magnus fees, EDGE rewards, lounge access and eligibility for HNI travellers.",
@@ -877,7 +878,7 @@ export const cards: CreditCard[] = [
       value: 8.5,
     },
     metalTone: "silver",
-    applyUrl: "https://www.axisbank.com/",
+    applyUrl: BANK_APPLY.AXIS,
     seoTitle: "Axis Atlas Credit Card — EDGE Miles",
     seoDescription:
       "Axis Atlas EDGE Miles earn rate, transfer partners, fees and lounge benefits.",
@@ -948,7 +949,7 @@ export const cards: CreditCard[] = [
       value: 9,
     },
     metalTone: "graphite",
-    applyUrl: "https://www.axisbank.com/",
+    applyUrl: BANK_APPLY.AXIS,
     seoTitle: "Axis ACE Credit Card — Cashback",
     seoDescription:
       "Axis ACE cashback categories, fee waiver and eligibility overview.",
@@ -1019,7 +1020,7 @@ export const cards: CreditCard[] = [
       value: 9,
     },
     metalTone: "blue",
-    applyUrl: "https://www.axisbank.com/",
+    applyUrl: BANK_APPLY.AXIS,
     seoTitle: "Flipkart Axis Credit Card Review",
     seoDescription:
       "Flipkart Axis cashback on Flipkart/Myntra, fees and eligibility.",
@@ -1090,7 +1091,7 @@ export const cards: CreditCard[] = [
       value: 9,
     },
     metalTone: "rose",
-    applyUrl: "https://www.axisbank.com/",
+    applyUrl: BANK_APPLY.AXIS,
     seoTitle: "Airtel Axis Credit Card — Utility Cashback",
     seoDescription:
       "Airtel Axis cashback on Airtel bills and utilities, fees and eligibility.",
@@ -1157,7 +1158,7 @@ export const cards: CreditCard[] = [
       value: 9.5,
     },
     metalTone: "gold",
-    applyUrl: "https://www.idfcfirstbank.com/",
+    applyUrl: BANK_APPLY.IDFC,
     seoTitle: "IDFC FIRST Wealth Credit Card",
     seoDescription:
       "IDFC FIRST Wealth zero fee, lounge access and eligibility for high CIBIL customers.",
@@ -1229,7 +1230,7 @@ export const cards: CreditCard[] = [
       value: 8.5,
     },
     metalTone: "silver",
-    applyUrl: "https://www.hsbc.co.in/",
+    applyUrl: BANK_APPLY.HSBC,
     seoTitle: "HSBC Live+ Credit Card Review",
     seoDescription:
       "HSBC Live+ cashback rates, annual fee and eligibility in India.",
@@ -1302,6 +1303,11 @@ export const cards: CreditCard[] = [
       "Scapia Federal zero forex, travel coins, fees and eligibility for young travellers.",
   },
 ];
+
+/** Seed catalog: original CardForge copy + official issuer apply hubs. */
+export const cards: CreditCard[] = [...seedCards, ...moreCards];
+
+export { BANK_APPLY };
 
 export function getCardBySlug(slug: string): CreditCard | undefined {
   return cards.find((c) => c.slug === slug);

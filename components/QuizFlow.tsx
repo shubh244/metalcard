@@ -6,7 +6,7 @@ import { useState } from "react";
 import { recommendCards } from "@/lib/recommend";
 import { formatINR } from "@/lib/format";
 import type { QuizAnswers } from "@/types/card";
-import { MetalCard } from "./MetalCard";
+import { ProductCard } from "./ProductCard";
 
 const steps = ["Income", "Spend", "Travel", "Preference"] as const;
 
@@ -79,7 +79,7 @@ export function QuizFlow() {
                   className="metal-panel flex gap-4 rounded-lg p-4 transition hover:border-brass/30"
                 >
                   <div className="w-28 shrink-0 sm:w-36">
-                    <MetalCard card={card} size="sm" interactive={false} />
+                    <ProductCard card={card} size="sm" interactive={false} />
                   </div>
                   <div className="min-w-0 flex-1">
                     <p className="text-xs text-brass">#{i + 1}</p>

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { cards, getCardById } from "@/data/cards";
 import { formatINR, formatIncome } from "@/lib/format";
-import { MetalCard } from "./MetalCard";
+import { ProductCard } from "./ProductCard";
 import type { CreditCard } from "@/types/card";
 
 type Props = {
@@ -113,7 +113,7 @@ export function CompareTable({ initialIds }: Props) {
                 {selected.map((c) => (
                   <th key={c.id} className="p-3 text-left align-top">
                     <div className="mx-auto mb-3 max-w-[200px]">
-                      <MetalCard card={c} size="sm" interactive={false} />
+                      <ProductCard card={c} size="sm" interactive={false} />
                     </div>
                     <Link
                       href={`/cards/${c.slug}`}

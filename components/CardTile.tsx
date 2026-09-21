@@ -11,7 +11,7 @@ import {
 import { useRef, type MouseEvent } from "react";
 import type { CreditCard } from "@/types/card";
 import { formatINR } from "@/lib/format";
-import { MetalCard } from "./MetalCard";
+import { ProductCard } from "./ProductCard";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import { useIsMobile } from "@/hooks/useIsMobile";
 
@@ -100,7 +100,7 @@ export function CardTile({ card, selected, onToggleCompare, index = 0 }: Props) 
         className="relative z-[1] block p-4 pb-2"
         style={{ transform: "translateZ(20px)" }}
       >
-        <MetalCard card={card} size="sm" interactive={false} />
+        <ProductCard card={card} size="sm" interactive={false} />
       </Link>
       <motion.div
         className="relative z-[1] flex flex-1 flex-col gap-3 p-4 pt-2"
